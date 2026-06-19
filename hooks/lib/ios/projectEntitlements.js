@@ -15,7 +15,7 @@ var ASSOCIATED_DOMAINS = 'com.apple.developer.associated-domains';
 var context;
 var projectRoot;
 var projectName;
-var entitlementsFilePath;
+var buildTypes = ["Debug", "Release"];
 
 module.exports = {
   generateAssociatedDomainsEntitlements: generateEntitlements
@@ -32,10 +32,12 @@ module.exports = {
 function generateEntitlements(cordovaContext, pluginPreferences) {
   context = cordovaContext;
 
-  var currentEntitlements = getEntitlementsFileContent();
-  var newEntitlements = injectPreferences(currentEntitlements, pluginPreferences);
-
-  saveContentToEntitlementsFile(newEntitlements);
+  for (var i = 0; i < buildTypes.length; ++i) {
+    var currentEntitlements = getEntitlementsFileContent(buildTypes[i])
+    var newEntitlements = injectPreferences(currentEntitlements, pluginPreferences);
+  
+    saveContentToEntitlementsFile(newEntitlements, buildTypes[i]);
+  }
 }
 
 // endregion
@@ -46,10 +48,11 @@ function generateEntitlements(cordovaContext, pluginPreferences) {
  * Save data to entitlements file.
  *
  * @param {Object} content - data to save; JSON object that will be transformed into xml
+ * @param {String} buildType "Debug" or "Release"
  */
-function saveContentToEntitlementsFile(content) {
+function saveContentToEntitlementsFile(content, buildType) {
   var plistContent = plist.build(content);
-  var filePath = pathToEntitlementsFile();
+  var filePath = pathToEntitlementsFile(buildType);
 
   // ensure that file exists
   mkpath.sync(path.dirname(filePath));
@@ -60,11 +63,12 @@ function saveContentToEntitlementsFile(content) {
 
 /**
  * Read data from existing entitlements file. If none exist - default value is returned
- *
+ * 
+ * @param {String} buildType "Debug" or "Release"
  * @return {String} entitlements file content
  */
-function getEntitlementsFileContent() {
-  var pathToFile = pathToEntitlementsFile();
+function getEntitlementsFileContent(buildType) {
+  var pathToFile = pathToEntitlementsFile(buildType);
   var content;
 
   try {
@@ -137,15 +141,12 @@ function domainsListEntryForHost(host) {
 
 /**
  * Path to entitlements file.
- *
+ * 
+ * @param {String} buildType "Debug" or "Release"
  * @return {String} absolute path to entitlements file
  */
-function pathToEntitlementsFile() {
-  if (entitlementsFilePath === undefined) {
-    entitlementsFilePath = path.join(getProjectRoot(), 'platforms', 'ios', getProjectName(), 'Resources', getProjectName() + '.entitlements');
-  }
-
-  return entitlementsFilePath;
+function pathToEntitlementsFile(buildType) {
+  return path.join(getProjectRoot(), 'platforms', 'ios', getProjectName(), 'Entitlements-' + buildType + '.plist');
 }
 
 /**
