@@ -32,8 +32,8 @@ function enableAssociativeDomainsCapability(cordovaContext) {
   // adjust preferences
   activateAssociativeDomains(projectFile.xcode);
 
-  // add entitlements file to pbxfilereference
-  addPbxReference(projectFile.xcode);
+  // add entitlements file to pbxfilereference (not required anymore)
+  // addPbxReference(projectFile.xcode);
 
   // save changes
   projectFile.write();
@@ -59,7 +59,8 @@ function activateAssociativeDomains(xcodeProject) {
 
   for (config in configurations) {
     buildSettings = configurations[config].buildSettings;
-    buildSettings['CODE_SIGN_ENTITLEMENTS'] = '"' + entitlementsFilePath + '"';
+    // not required anymore
+    // buildSettings['CODE_SIGN_ENTITLEMENTS'] = '"' + entitlementsFilePath + '"';
 
     // if deployment target is less then the required one - increase it
     if (buildSettings['IPHONEOS_DEPLOYMENT_TARGET']) {
@@ -77,7 +78,7 @@ function activateAssociativeDomains(xcodeProject) {
     console.log('IOS project now has deployment target set as: ' + IOS_DEPLOYMENT_TARGET);
   }
 
-  console.log('IOS project Code Sign Entitlements now set to: ' + entitlementsFilePath);
+  // console.log('IOS project Code Sign Entitlements now set to: ' + entitlementsFilePath);
 }
 
 // endregion
