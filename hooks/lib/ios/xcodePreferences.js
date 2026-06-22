@@ -9,7 +9,7 @@ Which is:
 var path = require('path');
 var fs = require('fs');
 var compare = require('node-version-compare');
-var IOS_DEPLOYMENT_TARGET = '11.0';
+var IOS_DEPLOYMENT_TARGET = '12.2';
 var COMMENT_KEY = /_comment$/;
 var context;
 var iosProject;
